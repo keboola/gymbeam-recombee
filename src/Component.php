@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MyComponent;
+namespace Keboola\GymbeamRecombee;
 
 use Keboola\Component\BaseComponent;
 
@@ -10,7 +10,7 @@ class Component extends BaseComponent
 {
     public function run(): void
     {
-        // @TODO implement
+        $inFile = $this->getDataDir() . '/tables/data.csv';
     }
 
     protected function getConfigClass(): string

@@ -1,7 +1,8 @@
 {
     "require": {
         "php": "^7.1",
-        "keboola/php-component": "^5.0"
+        "keboola/php-component": "^5.0",
+        "recombee/php-api-client": "^2.3"
     },
     "require-dev": {
         "jakub-onderka/php-parallel-lint": "^1.0",
@@ -14,13 +15,13 @@
     },
     "autoload": {
         "psr-4": {
-            "MyComponent\\": "src/"
+            "Keboola\\GymbeamRecombee\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "MyComponent\\Tests\\": "tests/phpunit/",
-            "MyComponent\\FunctionalTests\\": "tests/functional/"
+            "Keboola\\GymbeamRecombee\\Tests\\": "tests/phpunit/",
+            "Keboola\\GymbeamRecombee\\FunctionalTests\\": "tests/functional/"
         }
     },
     "scripts": {
