@@ -1,7 +1,12 @@
 version: '2'
 services:
-  dev:
+  dev: &base
     build: .
+    image: keboola/gymbeam-recombee
     volumes:
       - ./:/code
       - ./data:/data
+  xdebug:
+    <<: *base
+    build:
+      context: docker/xdebug

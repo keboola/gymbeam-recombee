@@ -23,38 +23,55 @@ class Component extends BaseComponent
         if (!file_exists($inFile)) {
             throw new \Exception("File {$inFile} not found");
         }
-
+        $batch = [];
         if (($handle = fopen($inFile, "r")) !== false) {
             $row = 0;
             while (($data = fgetcsv($handle, 1000, ",")) !== false) {
                 if ($row++ == 0) {
                     continue;
                 }
-                $recomms = $this->getRecommendations($data[0], (int) $data[1]);
-                $this->writeRecommendationToFile($data[0], $recomms);
+                $batch[] = [$data[0], $data[1]];
+                if ($row % $this->getComponentConfig()->getParalelRequests() == 0) {
+                    $recomms = $this->getRecommendations($batch);
+                    $this->writeRecommendationToFile($batch, $recomms);
+                    $batch = [];
+                }
             }
             fclose($handle);
         }
-    }
 
-    private function writeRecommendationToFile(string $email, array $recomms): void
-    {
-        $items = ['', '', '', '', '', '', '', '', '', ''];
-        for ($i = 0; $i < 9; $i++) {
-            if (isset($recomms['recomms'][$i])) {
-                $items[$i] = $recomms['recomms'][$i]['id'];
-            }
+        if (count($batch)) {
+            $recomms = $this->getRecommendations($batch);
+            $this->writeRecommendationToFile($batch, $recomms);
         }
-        file_put_contents(
-            $this->getDataDir() . self::OUTPUT_TABLE,
-            $email . ',' . implode(',', $items) . "\n",
-            FILE_APPEND
-        );
     }
 
-    private function getRecommendations(string $email, int $count): array
+    private function getRecommendations(array $batch): array
     {
-        return $this->getClient()->send(new Reqs\RecommendItemsToUser($email, $count));
+        $reqParts = [];
+        foreach ($batch as $item) {
+            $reqParts[] = new Reqs\RecommendItemsToUser($item[0], $item[1]);
+        }
+        return $this->getClient()->send(new Reqs\Batch($reqParts));
+    }
+
+    private function writeRecommendationToFile(array $batch, array $recomms): void
+    {
+        foreach ($batch as $key => $item) {
+            $items = [];
+            for ($i = 0; $i < $this->getComponentConfig()->getMaxRecommendations(); $i++) {
+                if (isset($recomms[$key]['json']['recomms'][$i])) {
+                    $items[$i] = $recomms[$key]['json']['recomms'][$i]['id'];
+                } else {
+                    $items[$i] = '';
+                }
+            }
+            file_put_contents(
+                $this->getDataDir() . self::OUTPUT_TABLE,
+                $item [0] . ',' . implode(',', $items) . "\n",
+                FILE_APPEND
+            );
+        }
     }
 
     private function getClient(): Client

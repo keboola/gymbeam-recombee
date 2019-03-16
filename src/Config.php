@@ -17,4 +17,14 @@ class Config extends BaseConfig
     {
         return $this->getValue(['parameters', 'databaseId']);
     }
+
+    public function getParalelRequests(): int
+    {
+        return $this->getValue(['parameters', 'paralelRequests']);
+    }
+
+    public function getMaxRecommendations(): int
+    {
+        return $this->getValue(['parameters', 'maxRecommendations']);
+    }
 }

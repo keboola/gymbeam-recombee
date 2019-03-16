@@ -22,6 +22,10 @@ class ConfigDefinition extends BaseConfigDefinition
                 ->scalarNode('token')
                     ->isRequired()
                 ->end()
+                ->integerNode('paralelRequests')
+                    ->defaultValue(10)
+                ->end()
+                ->integerNode('maxRecommendations')
             ->end()
         ;
         // @formatter:on
