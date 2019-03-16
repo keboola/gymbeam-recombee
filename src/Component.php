@@ -23,6 +23,23 @@ class Component extends BaseComponent
         if (!file_exists($inFile)) {
             throw new \Exception("File {$inFile} not found");
         }
+
+        file_put_contents(
+            $this->getDataDir() . self::OUTPUT_TABLE,
+            implode(',', [
+                'email',
+                'product_1',
+                'product_2',
+                'product_3',
+                'product_4',
+                'product_5',
+                'product_6',
+                'product_7',
+                'product_8',
+                'product_9',
+                'product_10',
+            ]) . "\n"
+        );
         $batch = [];
         if (($handle = fopen($inFile, "r")) !== false) {
             $row = 0;
